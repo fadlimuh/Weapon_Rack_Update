@@ -48,7 +48,6 @@ class LoginRequest extends FormRequest
                 'email' => trans('auth.failed'),
             ]);
         }
-
         RateLimiter::clear($this->throttleKey());
     }
 
@@ -83,3 +82,4 @@ class LoginRequest extends FormRequest
         return Str::transliterate(Str::lower($this->string('email')).'|'.$this->ip());
     }
 }
+

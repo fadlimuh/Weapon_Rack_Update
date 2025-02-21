@@ -1,3 +1,17 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import '~bootstrap/dist/css/bootstrap.min.css';
+@import "bootstrap-icons/font/bootstrap-icons.css";
+
+
+
+@font-face {
+  font-family: 'PlusJakartaSans';
+  src: url('/fonts/PlusJakartaSans-VariableFont_wght.ttf') format('truetype-variations');
+}
+
+
+
+
+

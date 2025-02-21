@@ -1,0 +1,182 @@
+@font-face {
+  font-family: 'PlusJakartaSans';
+  src: url('/fonts/PlusJakartaSans-VariableFont_wght.ttf') format('truetype');
+}
+
+
+        body {
+            font-family: 'PlusJakartaSans', sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+        }
+
+        .sidebar {
+            height: 100vh;
+            background-color: #f8f9fa;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            z-index: 1000;
+            width: 250px;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .sidebar.closed {
+            transform: translateX(-100%);
+        }
+
+        .sidebar a {
+            color: #333;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .sidebar a:hover, .sidebar a.active {
+            background-color: #e9ecef;
+            font-weight: bold;
+        }
+
+        .sidebar a i {
+            margin-right: 10px;
+            font-size: 18px;
+        }
+
+        .content {
+            padding: 20px;
+            margin-left: 250px;
+            transition: margin-left 0.3s;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .content.full {
+            margin-left: 0;
+        }
+
+        .navbar {
+            background-color: #fff;
+            padding: 10px 20px;
+            border-bottom: 1px solid #e9ecef;
+            z-index: 100;
+            position: sticky;
+            top: 0;
+        }
+
+        .navbar .navbar-brand {
+            font-weight: bold;
+            color: #28a745;
+        }
+
+        .navbar .navbar-nav .nav-item .nav-link {
+            color: #333;
+        }
+
+        .navbar .navbar-nav .nav-item .nav-link:hover {
+            color: #28a745;
+        }
+
+        .table th, .table td {
+            vertical-align: middle;
+            padding: 15px;
+        }
+
+        .table th {
+            background-color: #28a745;
+            color: #fff;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 200px;
+            }
+
+            .content {
+                margin-left: 0;
+            }
+
+            .sidebar a {
+                padding: 10px;
+            }
+
+            .navbar .navbar-brand {
+                font-size: 16px;
+            }
+
+            .table td, .table th {
+                padding: 8px;
+                font-size: 14px;
+            }
+        }
+
+        .card {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 15px;
+            margin-bottom: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-title {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .card-body {
+            font-size: 16px;
+        }
+
+
+        /* Sidebar */
+.sidebar {
+    width: 250px;
+    transition: all 0.3s ease;
+}
+
+.sidebar.closed {
+    width: 0;
+    overflow: hidden;
+}
+
+/* Main content container */
+#mainContent {
+    transition: margin-left 0.3s ease;
+}
+
+#mainContent.full {
+    margin-left: 0;
+}
+
+#contentArea {
+    transition: width 0.3s ease;
+}
+
+/* Adjust layout for small screens */
+@media (max-width: 768px) {
+    .sidebar.closed {
+        display: none;
+    }
+
+    #mainContent {
+        width: 100%;
+        margin-left: 0;
+    }
+
+    #contentArea {
+        width: 100%;
+    }
+
+    #sidebarToggle {
+        display: block;
+        margin-left: 10px;
+    }
+}
