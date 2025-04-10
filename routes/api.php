@@ -27,4 +27,19 @@ Route::prefix('tmprfids')->group(function () {
     Route::delete('/{id}', [TmprfidsController::class, 'destroy']);
 });
 
-Route::get('/weapons', [WeaponController::class, 'index']);
+Route::prefix('weapons')->group(function () {
+    // GET /api/weapons - Menampilkan semua data senjata
+    Route::get('/', [WeaponController::class, 'index']);
+
+    // POST /api/weapons - Menyimpan data senjata baru
+    Route::post('/', [WeaponController::class, 'store']);
+
+    // GET /api/weapons/{id} - Menampilkan detail senjata berdasarkan ID
+    Route::get('/{id}', [WeaponController::class, 'show']);
+
+    // PUT /api/weapons/{id} - Memperbarui data senjata berdasarkan ID
+    Route::put('/{id}', [WeaponController::class, 'update']);
+
+    // DELETE /api/weapons/{id} - Menghapus data senjata berdasarkan ID
+    Route::delete('/{id}', [WeaponController::class, 'destroy']);
+});

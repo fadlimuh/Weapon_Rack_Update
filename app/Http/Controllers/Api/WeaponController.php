@@ -1,9 +1,12 @@
 <?php
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
 use App\Models\Weapons;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\Controller;
+use Illuminate\Database\QueryException;
 
 class WeaponController extends Controller
 {
@@ -16,19 +19,42 @@ class WeaponController extends Controller
         return response()->json(['success' => true, 'data' => $weapons]);
     }
 
-    /**
-     * Menyimpan data senjata baru.
-     */
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
+            'loadCellID' => 'required|integer',
+            'slaveNumber' => 'required|integer',
             'status' => 'required|integer',
-            'weight' => 'nullable|numeric',
+            'weight' => 'required|numeric|min:-1', // Izinkan nilai negatif jika perlu
+            'rackNumber' => 'required|string|max:255',
         ]);
 
-        $weapon = Weapons::create($validated);
-        return response()->json(['success' => true, 'data' => $weapon], 201);
+        try {
+            $weapon = Weapons::updateOrCreate(
+                ['loadCellID' => $validated['loadCellID']], // Kolom unik
+                [
+                    'slaveNumber' => $validated['slaveNumber'],
+                    'status' => $validated['status'],
+                    'weight' => $validated['weight'],
+                    'rackNumber' => $validated['rackNumber'],
+                ]
+            );
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Data berhasil disimpan',
+                'data' => $weapon,
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Gagal menyimpan data:', [
+                'error' => $e->getMessage(),
+                'input' => $request->all(),
+            ]);
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan server',
+            ], 500);
+        }
     }
 
     /**
@@ -47,9 +73,11 @@ class WeaponController extends Controller
     {
         $weapon = Weapons::findOrFail($id);
         $validated = $request->validate([
-            'name' => 'sometimes|string|max:255',
+            'loadCellID' => 'sometimes|string|max:255',
+            'slaveNumber' => 'sometimes|integer',
             'status' => 'sometimes|integer',
-            'weight' => 'nullable|numeric',
+            'weight' => 'sometimes|numeric',
+            'rackNumber' => 'sometimes|string|max:255',
         ]);
         $weapon->update($validated);
         return response()->json(['success' => true, 'data' => $weapon]);
@@ -65,4 +93,3 @@ class WeaponController extends Controller
         return response()->json(['success' => true, 'message' => 'Data berhasil dihapus']);
     }
 }
-

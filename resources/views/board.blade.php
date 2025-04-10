@@ -162,6 +162,27 @@
             color: #555;
         }
 
+        .card-status {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100px;
+            border-radius: 50%;
+            margin: 0 auto 10px;
+        }
+        .card-status.red {
+            background-color: red;
+        }
+        .card-status.yellow {
+            background-color: yellow;
+        }
+        .card-status.green {
+            background-color: green;
+        }
+        .card-status.secondary {
+            background-color: gray;
+        }
+
         /* Responsive Styles */
         @media (max-width: 768px) {
             .sidebar {
@@ -255,113 +276,61 @@
 </head>
 <body>
     @include('components.navbar')
+    @include('components.aside')
 
     <div class="d-flex">
-        <!-- Sidebar -->
-        <aside class="sidebar rounded-3" id="sidebar">
-            <a href="{{ route('dashboard') }}" class="d-flex align-items-center py-2">
-                <i class="fas fa-home ms-2 me-3"></i>
-                <span>Dashboard</span>
-            </a>
-            <a href="{{ route('board.index') }}" class="d-flex align-items-center py-2 active">
-                <i class="fas fa-clipboard-list ms-2 me-3"></i>
-                <span>Papan Status Senjata</span>
-            </a>
-            <a href="{{ route('personnels.index') }}" class="d-flex align-items-center py-2">
-                <i class="fas fa-user ms-2 me-3"></i>
-                <span>Data Personel</span>
-            </a>
-            <a href="{{ route('weapons.index') }}" class="d-flex align-items-center py-2">
-                <i class="fas fa-sitemap ms-2 me-3"></i>
-                <span>Data Senjata</span>
-            </a>
-            <a href="{{ route('admin.index') }}" class="d-flex align-items-center py-2">
-                <i class="fas fa-lock ms-2 me-3"></i>
-                <span>Admin</span>
-            </a>
-        </aside>
 
         <div class="content flex-grow-1" id="mainContent">
             <!-- Sidebar Toggle Button for Mobile -->
             @include('components.togglebutton')
 
+            <nav style="margin-top: 10px; margin-left: 16px;" aria-label="breadcrumb mb-3">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
+                    <li class="breadcrumb-item active" aria-current="page" style="font-weight: bold;"><a href="{{ route('board.index') }}">Papan Status</a></li>
+                </ol>
+            </nav>
+
             <div class="container-fluid p-3" id="contentArea" style="overflow-x: hidden;">
                 <h2>Status Senjata</h2>
                 <div class="row">
-                    <!-- Kolom Kiri: Deskripsi Papan -->
+                <!-- Kolom Kiri: Deskripsi Papan -->
                     <div class="col-md-4">
                         <div class="card shadow-sm h-100">
-                            <img src="https://via.placeholder.com/200x150" class="card-img-top" alt="Tampilan Papan" style="max-width: 100%;">
+                            <img src="https://via.placeholder.com/200x150" class="card-img-top" alt="{{ __('board_title') }}" style="max-width: 100%;">
                             <div class="card-body">
-                                <h6 class="card-title">Tampilan Papan</h6>
+                                <h6 class="card-title">{{ __('messages.board_title') }}</h6>
                                 <p class="card-text">
-                                    Papan ini berfungsi untuk menampilkan status pada rak senjata. Bila statusnya <span style="color: red">merah</span> menunjukkan senjata tidak tersedia, jika berwarna <span style="color: yellow">kuning</span> menunjukkan senjatanya tersedia tetapi magazine nya tidak ada dan jika berwarna <span style="color: green">hijau</span> maka statusnya menunjukkan senjata tersedia dan magazine nya ada.
+                                    {{ __('messages.board_description') }}
+                                    <span class="fw-bold text-danger">{{ __('messages.status_red') }}</span> {{ __('messages.status_red_description') }},
+                                    <span class="fw-bold text-warning">{{ __('messages.status_yellow') }}</span> {{ __('messages.status_yellow_description') }},
+                                    <span class="fw-bold text-success">{{ __('messages.status_green') }}</span> {{ __('messages.status_green_description') }}.
                                 </p>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Kolom Kanan: Daftar Rak Senjata -->
-                    <div class="col-md-8">
-                        <div class="border p-3" id="racks" style="height: 400px; overflow-y: auto; overflow-x: hidden;">
-                            <!-- Racks akan dimasukkan secara dinamis di sini -->
+                    <!-- Kolom Kanan: Data Rak -->
+                    <div class="col-md-8 col-sm-12">
+                        <div class="card shadow-3">
+                            <div class="card-body">
+                                <h6 class="card-title">Data Rak</h6>
+                                <div class="table-responsive" id="racksTable">
+                                    <div class="row g-3" id="rack-data">
+                                        <!-- Data rak akan dimuat di sini -->
+                                    </div>
+                                    <script src="{{ asset('assets/jquery/jquery-3.7.1.min.js') }}"></script>
+                                    @include('components.papan')
+                                </div>
+                            </div>
                         </div>
-                        <script>
-                            $(document).ready(function() {
-                                $.ajax({
-                                    url: "", // Ganti dengan URL endpoint yang sesuai
-                                    type: 'GET',
-                                    success: function(response) {
-                                        let racks = '<div class="row" style="gap: 10px; flex-wrap: wrap;">'; // Gunakan flexbox untuk layout yang lebih fleksibel
-                                        response.forEach(weapon => {
-                                            racks += `
-                                                <div class="col-md-4 col-sm-6 mb-3" style="flex: 1 1 calc(33.333% - 20px);"> <!-- Sesuaikan lebar kartu -->
-                                                    <div class="card h-100">
-                                                        <div class="card-body text-center">
-                                                            <h6 class="card-title">Rak ${weapon.rack}</h6>
-                                                            <div class="d-flex justify-content-center">
-                                            `;
-                                            for (let i = 1; i <= 3; i++) {
-                                                racks += `
-                                                    <div class="rounded-circle bg-${weapon.magazine == i ? 'success' : 'secondary'} text-white d-flex align-items-center justify-content-center" style="width: 30px; height: 30px; margin: 5px; ${weapon.magazine == i ? 'box-shadow: 0 0 10px 2px green;' : ''}">
-                                                        ${weapon.magazine == i ? '<i class="fas fa-check"></i>' : ''}
-                                                    </div>
-                                                `;
-                                            }
-                                            racks += `
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            `;
-                                        });
-                                        racks += '</div>'; // Tutup row
-                                        $('#racks').html(racks); // Masukkan konten ke dalam #racks
-                                    },
-                                    error: function(xhr, status, error) {
-                                        console.error("AJAX Error: ", status, error); // Handle error jika AJAX gagal
-                                    }
-                                });
-                            });
-                        </script>
                     </div>
+                    <!-- jQuery -->
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Sidebar Toggle Script -->
-    <script>
-        document.getElementById('sidebarToggle').addEventListener('click', function() {
-            const sidebar = document.getElementById('sidebar');
-            const mainContent = document.getElementById('mainContent');
-            const contentArea = document.getElementById('contentArea');
-
-            sidebar.classList.toggle('closed');
-            mainContent.classList.toggle('full');
-            contentArea.style.width = sidebar.classList.contains('closed') ? '100%' : 'calc(100vw - 250px)';
-        });
-    </script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-csOnv+IjgYjKbj4w3j/KTFlkEgo8flXMi/jYYFT/hqly9TCtrRf+vKcmybn9BjQ2" crossorigin="anonymous"></script>
 </body>

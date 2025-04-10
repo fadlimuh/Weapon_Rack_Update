@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\personnels;
 use App\Models\Status; // Sesuaikan dengan nama model yang benar
+use App\Models\weapons;
 use Illuminate\Http\Request;
 
 class StatusController extends Controller
@@ -12,8 +14,14 @@ class StatusController extends Controller
      */
     public function index()
     {
+        // Ambil loadcellid dari tabel personnels
+        $loadcell_id = personnels::pluck('loadCellID');
+
+        // Ambil loadcellid dari tabel weapons
+        $loadcell_id = $loadcell_id->merge(weapons::pluck('loadCellID'));
+
         // Ambil semua data status dari database
-        $statuses = Status::with('personnel')->get();
+        $statuses = Status::whereIn('loadCellID', $loadcell_id)->with('personnel', 'personnel.weapon')->get();
 
         // Kirim data ke view dashboard
         return view('dashboard', compact('statuses'));

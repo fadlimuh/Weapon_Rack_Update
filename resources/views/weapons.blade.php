@@ -157,40 +157,18 @@
 </head>
 <body>
     @include('components.navbar')
-    <div class="d-flex">
-        <!-- Sidebar -->
-        <aside class="sidebar rounded-3" id="sidebar">
-            <a href="{{ route('dashboard') }}" class="d-flex align-items-center py-2">
-                <i class="fas fa-home ms-2 me-3"></i>
-                <span>Dashboard</span>
-            </a>
-            <a href="{{ route('board.index') }}" class="d-flex align-items-center py-2">
-                <i class="fas fa-clipboard-list ms-2 me-3"></i>
-                <span>Papan Status Senjata</span>
-            </a>
-            <a href="{{ route('personnels.index') }}" class="d-flex align-items-center py-2">
-                <i class="fas fa-user ms-2 me-3"></i>
-                <span>Data Personel</span>
-            </a>
-            <a href="{{ route('weapons.index') }}" class="d-flex align-items-center py-2 active">
-                <i class="fas fa-sitemap ms-2 me-3"></i>
-                <span>Data Senjata</span>
-            </a>
-            <a href="{{ route('admin.index') }}" class="d-flex align-items-center py-2">
-                <i class="fas fa-lock ms-2 me-3"></i>
-                <span>Admin</span>
-            </a>
-        </aside>
+    @include('components.aside')
 
         <!-- Main Content -->
         <div class="content flex-grow-1" id="mainContent">
             <!-- Sidebar Toggle Button -->
             @include('components.togglebutton')
 
+
             <div class="container-fluid p-1">
                 <div class="container mt-2">
-                    <h2>Data Senjata</h2>
-                    <p>Tampilan data Senjata</p>
+                    <h2>{{ __('messages.menu_weapons') }}</h2>
+                    <p>{{ __('messages.dashboard_description') }}</p>
 
                     <div class="container">
                         <div class="row">
@@ -199,10 +177,10 @@
                                 <table class="table table-bordered mt-4" id="weaponTable">
                                     <thead>
                                         <tr>
-                                            <th scope="col">Rak</th>
-                                            <th scope="col">Load Cell ID</th>
-                                            <th scope="col">Status</th>
-                                            <th scope="col">Berat</th>
+                                            <th scope="col">{{ __('messages.table_rack') }}</th>
+                                            <th scope="col">{{ __('messages.table_load_cell_id') }}</th>
+                                            <th scope="col">{{ __('messages.table_status') }}</th>
+                                            <th scope="col">{{ __('messages.table_weight') }}</th>
                                         </tr>
                                     </thead>
                                     <tbody id="weaponTableBody">
@@ -210,62 +188,128 @@
                                     </tbody>
                                 </table>
                                 <script src="{{ asset('assets/jquery/jquery-3.7.1.min.js') }}"></script>
+                                <!-- DataTables JS -->
+                                <script src="{{ asset('assets/datatables/datatables.min.js') }}" defer></script>
                                 <script>
                                     $(document).ready(function () {
-                                        $.ajax({
-                                            url: "api/weapons", // Endpoint API
-                                            type: 'GET',
-                                            dataType: 'json',
-                                            success: function (response) {
-                                                // Pastikan respons memiliki properti 'success' dan 'data'
-                                                if (response.success && Array.isArray(response.data)) {
-                                                    // Kelompokkan data berdasarkan rackNumber
-                                                    const groupedData = {};
-                                                    response.data.forEach(weapon => {
-                                                        const rackNumber = weapon.rackNumber;
-                                                        if (!groupedData[rackNumber]) {
-                                                            groupedData[rackNumber] = [];
-                                                        }
-                                                        groupedData[rackNumber].push(weapon);
-                                                    });
-
-                                                    // Buat baris tabel untuk setiap rak
-                                                    let tr = '';
-                                                    for (const [rackNumber, weapons] of Object.entries(groupedData)) {
-                                                        tr += `
-                                                            <tr>
-                                                                <td>${rackNumber}</td>
-                                                                <td>
-                                                                    <ul class="list-unstyled">
-                                                                        ${weapons.map((weapon, index) => `<li>${index + 1}</li>`).join('')}
-                                                                    </ul>
-                                                                </td>
-                                                                <td>
-                                                                    <ul class="list-unstyled">
-                                                                        ${weapons.map(weapon => `
-                                                                            <li>
-                                                                                ${weapon.status === 0 ? '<span class="badge rounded-pill bg-danger">Tidak Tersedia</span>' : ''}
-                                                                                ${weapon.status === 1 ? '<span class="badge rounded-pill bg-warning">Tersedia (Tidak ada Magazine)</span>' : ''}
-                                                                                ${weapon.status === 2 ? '<span class="badge rounded-pill bg-success">Tersedia (Ada Magazine)</span>' : ''}
-                                                                            </li>
-                                                                        `).join('')}
-                                                                    </ul>
-                                                                </td>
-                                                                <td>
-                                                                    <ul class="list-unstyled">
-                                                                        ${weapons.map(weapon => `<li>${weapon.weight} kg</li>`).join('')}
-                                                                    </ul>
-                                                                </td>
-                                                            </tr>
-                                                        `;
+                                        // Inisialisasi DataTables
+                                        const table = $('#weaponTable').DataTable({
+                                            responsive: true,
+                                            autoWidth: false,
+                                            ajax: {
+                                                url: "/api/weapons", // Endpoint API
+                                                type: 'GET',
+                                                dataSrc: function (response) {
+                                                    console.log('Response API:', response); // Debugging
+                                                    if (response.success && Array.isArray(response.data)) {
+                                                        return response.data;
+                                                    } else {
+                                                        console.error('Respons API tidak valid:', response);
+                                                        return [];
                                                     }
-                                                    $('#weaponTableBody').html(tr); // Update isi tabel
-                                                } else {
-                                                    console.error('Respons API tidak valid:', response);
                                                 }
                                             },
-                                            error: function (xhr, status, error) {
-                                                console.error('Error saat mengambil data senjata:', error);
+                                            columns: [
+                                                {
+                                                    data: 'rackNumber',
+                                                    render: function (data, type, row, meta) {
+                                                        if (meta.row === 0 || row.rackNumber !== table.row(meta.row - 1).data().rackNumber) {
+                                                            const rowspan = table
+                                                                .rows()
+                                                                .data()
+                                                                .filter(r => r.rackNumber === row.rackNumber).length;
+                                                            return `<td rowspan="${rowspan}" class="align-middle">${row.rackNumber}</td>`;
+                                                        }
+                                                        return '';
+                                                    },
+                                                    className: 'align-middle',
+                                                    title: '{{ __("messages.table_rack") }}'
+                                                },
+                                                {
+                                                    data: 'loadCellID',
+                                                    title: '{{ __("messages.table_load_cell_id") }}'
+                                                },
+                                                {
+                                                    data: 'status',
+                                                    render: function (data) {
+                                                        if (data === 0) {
+                                                            return `<span class="badge bg-danger">{{ __('messages.status_red_description') }}</span>`;
+                                                        } else if (data === 1) {
+                                                            return `<span class="badge bg-warning">{{ __('messages.status_yellow_description') }}</span>`;
+                                                        } else if (data === 2) {
+                                                            return `<span class="badge bg-success">{{ __('messages.status_green_description') }}</span>`;
+                                                        }
+                                                        return '';
+                                                    },
+                                                    title: '{{ __("messages.table_status") }}'
+                                                },
+                                                {
+                                                    data: 'weight',
+                                                    render: function (data) {
+                                                        return data + ' {{ __("messages.table_weight_unit") }}';
+                                                    },
+                                                    className: 'align-middle',
+                                                    title: '{{ __("messages.table_weight") }}'
+                                                }
+                                            ],
+                                            language: {
+                                                search: '<i class="fas fa-search"></i> {{ __("messages.datatable_search") }}',
+                                                lengthMenu: "{{ __('messages.datatable_length_menu') }}",
+                                                info: "{{ __('messages.datatable_info') }}",
+                                                infoFiltered: "{{ __('messages.datatable_info_filtered') }}",
+                                                paginate: {
+                                                    first: '<i class="fas fa-step-backward"></i> {{ __("messages.datatable_first") }}',
+                                                    last: '<i class="fas fa-step-forward"></i> {{ __("messages.datatable_last") }}',
+                                                    next: '<i class="fas fa-chevron-right"></i> {{ __("messages.datatable_next") }}',
+                                                    previous: '<i class="fas fa-chevron-left"></i> {{ __("messages.datatable_previous") }}'
+                                                }
+                                            },
+                                            dom: '<"d-flex justify-content-between align-items-center mb-3"Bf>t<"d-flex justify-content-between align-items-center mt-3"ip>',
+                                            buttons: [
+                                                {
+                                                    extend: 'copy',
+                                                    text: '<i class="fas fa-copy"></i> {{ __("messages.datatable_copy") }}',
+                                                    className: 'btn btn-secondary btn-sm',
+                                                    title: '{{ __("messages.datatable_copy") }}'
+                                                },
+                                                {
+                                                    extend: 'csv',
+                                                    text: '<i class="fas fa-file-csv"></i> {{ __("messages.datatable_csv") }}',
+                                                    className: 'btn btn-primary btn-sm',
+                                                    title: '{{ __("messages.datatable_csv") }}'
+                                                },
+                                                {
+                                                    extend: 'excel',
+                                                    text: '<i class="fas fa-file-excel"></i> {{ __("messages.datatable_excel") }}',
+                                                    className: 'btn btn-success btn-sm',
+                                                    title: '{{ __("messages.datatable_excel") }}'
+                                                },
+                                                {
+                                                    extend: 'pdf',
+                                                    text: '<i class="fas fa-file-pdf"></i> {{ __("messages.datatable_pdf") }}',
+                                                    className: 'btn btn-danger btn-sm',
+                                                    title: '{{ __("messages.datatable_pdf") }}',
+                                                    customize: function(doc) {
+                                                        doc.defaultStyle.fontSize = 10;
+                                                        doc.styles.tableHeader.fontSize = 12;
+                                                    }
+                                                },
+                                                {
+                                                    extend: 'print',
+                                                    text: '<i class="fas fa-print"></i> {{ __("messages.datatable_print") }}',
+                                                    className: 'btn btn-info btn-sm',
+                                                    title: '{{ __("messages.datatable_print") }}',
+                                                    customize: function(win) {
+                                                        $(win.document.body).css('font-size', '12px');
+                                                        $(win.document.body).find('table').addClass('compact').css('font-size', 'inherit');
+                                                    }
+                                                }
+                                            ],
+                                            lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "{{ __('messages.datatable_length_menu_all') }}"]],
+                                            pageLength: 10,
+                                            order: [[0, 'asc']],
+                                            initComplete: function() {
+                                                console.log('DataTables telah diinisialisasi dengan sukses!');
                                             }
                                         });
                                     });
@@ -276,96 +320,7 @@
                 </div>
             </div>
         </div>
-
-        <!-- DataTables JS -->
-        <script src="{{ asset('assets/datatables/datatables.min.js') }}" defer></script>
-        <script>
-            document.addEventListener("DOMContentLoaded", function() {
-                try {
-                    // Konfigurasi DataTables
-                    const tableConfig = {
-                        responsive: true,
-                        autoWidth: false,
-                        language: {
-                            search: '<i class="fas fa-search"></i> Cari:',
-                            lengthMenu: "Tampilkan _MENU_ data",
-                            info: "Menampilkan _START_ hingga _END_ dari _TOTAL_ data",
-                            infoFiltered: "(disaring dari total _MAX_ data)",
-                            paginate: {
-                                first: '<i class="fas fa-step-backward"></i> Pertama',
-                                last: '<i class="fas fa-step-forward"></i> Terakhir',
-                                next: '<i class="fas fa-chevron-right"></i> Berikutnya',
-                                previous: '<i class="fas fa-chevron-left"></i> Sebelumnya'
-                            }
-                        },
-                        dom: '<"d-flex justify-content-between align-items-center mb-3"Bf>t<"d-flex justify-content-between align-items-center mt-3"ip>',
-                        buttons: [
-                            {
-                                extend: 'copy',
-                                text: '<i class="fas fa-copy"></i> Salin',
-                                className: 'btn btn-secondary btn-sm',
-                                title: 'Data Personel - Salin'
-                            },
-                            {
-                                extend: 'csv',
-                                text: '<i class="fas fa-file-csv"></i> Ekspor CSV',
-                                className: 'btn btn-primary btn-sm',
-                                title: 'Data Personel - CSV'
-                            },
-                            {
-                                extend: 'excel',
-                                text: '<i class="fas fa-file-excel"></i> Ekspor Excel',
-                                className: 'btn btn-success btn-sm',
-                                title: 'Data Personel - Excel'
-                            },
-                            {
-                                extend: 'pdf',
-                                text: '<i class="fas fa-file-pdf"></i> Ekspor PDF',
-                                className: 'btn btn-danger btn-sm',
-                                title: 'Data Personel - PDF',
-                                customize: function(doc) {
-                                    doc.defaultStyle.fontSize = 10;
-                                    doc.styles.tableHeader.fontSize = 12;
-                                }
-                            },
-                            {
-                                extend: 'print',
-                                text: '<i class="fas fa-print"></i> Cetak',
-                                className: 'btn btn-info btn-sm',
-                                title: 'Data Personel - Cetak',
-                                customize: function(win) {
-                                    $(win.document.body).css('font-size', '12px');
-                                    $(win.document.body).find('table').addClass('compact').css('font-size', 'inherit');
-                                }
-                            }
-                        ],
-                        lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "Semua"]],
-                        pageLength: 10,
-                        order: [[0, 'asc']],
-                        initComplete: function() {
-                            console.log('DataTables telah diinisialisasi dengan sukses!');
-                        }
-                    };
-
-                    // Inisialisasi DataTables
-                    $('#weaponTable').DataTable(tableConfig);
-                } catch (error) {
-                    console.error('Gagal menginisialisasi DataTables:', error);
-                }
-            });
-        </script>
-
-        <!-- Sidebar Toggle Script -->
-        <script>
-            const sidebarToggle = document.getElementById('sidebarToggle');
-            const sidebar = document.getElementById('sidebar');
-            const content = document.getElementById('mainContent');
-
-            sidebarToggle.addEventListener('click', () => {
-                sidebar.classList.toggle('closed');
-                content.classList.toggle('full');
-            });
-        </script>
+    </div>
 
 </body>
 </html>

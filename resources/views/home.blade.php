@@ -24,70 +24,69 @@
                     <option value="en" {{ app()->getLocale() == 'en' || request()->query('lang') == 'en' ? 'selected' : '' }}>English</option>
                 </select>
                 <!-- Tombol untuk membuka modal -->
-                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalLogin">Mulai</button>
+                <button type="button" class="btn btn-success ms-3" data-bs-toggle="modal" data-bs-target="#modalLogin">Mulai</button>
 
-<!-- Modal Login -->
-<div class="modal fade" id="modalLogin" tabindex="-1" aria-labelledby="modalLoginLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="row">
-                <!-- Bagian Kiri untuk Form Login -->
-                <div class="col-md-6 p-5">
-                    <div class="modal-header border-0">
-                        <h2 class="modal-title w-100 text-center">LOGIN</h2>
+                <div class="modal fade" id="modalLogin" tabindex="-1" aria-labelledby="modalLoginLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="row">
+                                <!-- Bagian Kiri untuk Form Login -->
+                                <div class="col-md-6 p-5">
+                                    <div class="modal-header border-0">
+                                        <h2 class="modal-title w-100 text-center">LOGIN</h2>
+                                    </div>
+                                    <form method="POST" action="{{ route('login') }}">
+                                        @csrf
+                                        <!-- Status Session -->
+                                        <x-auth-session-status class="mb-4" :status="session('status')" />
+
+                                        <div class="modal-body">
+                                            <p class="text-center">Silahkan memasukan Email dan Password</p>
+
+                                            <!-- Email Address -->
+                                            <div class="mb-4">
+                                                <x-input-label for="email" :value="__('Email')" />
+                                                <input type="email" class="form-control rounded-pill" id="email" name="email" placeholder="Masukan email anda..." :value="old('email')" required autofocus autocomplete="username">
+                                                <x-input-error :messages="$errors->get('email')" class="mt-2" />
+                                            </div>
+
+                                            <!-- Password -->
+                                            <div class="mb-4">
+                                                <x-input-label for="password" :value="__('Password')" />
+                                                <input type="password" class="form-control rounded-pill" id="password" name="password" placeholder="Masukan password anda" required autocomplete="current-password">
+                                                <x-input-error :messages="$errors->get('password')" class="mt-2" />
+                                            </div>
+
+                                            <!-- Remember Me -->
+                                            <div class="form-check mt-3 mb-3 text-center">
+                                                <input id="remember_me" type="checkbox" class="form-check-input rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" name="remember">
+                                                <label for="remember_me" class="form-check-label text-sm text-gray-600">{{ __('Remember me') }}</label>
+                                            </div>
+                                        </div>
+
+                                        <div class="modal-footer border-0 justify-content-center">
+                                            <button type="submit" class="btn btn-success w-100 rounded-pill">Login</button>
+                                        </div>
+
+                                        <!-- Forgot Password -->
+                                        <div class="text-center mt-3">
+                                            @if (Route::has('password.request'))
+                                                <a class="text-sm text-gray-600 hover:text-gray-900" href="{{ route('password.request') }}">
+                                                    {{ __('Forgot your password?') }}
+                                                </a>
+                                            @endif
+                                        </div>
+                                    </form>
+                                </div>
+
+                                <!-- Bagian Kanan untuk Gambar -->
+                                <div class="col-md-6 d-none d-md-block p-0">
+                                    <img src="/path/to/image.png" alt="Image" class="img-fluid h-100">
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <form method="POST" action="{{ route('login') }}">
-                        @csrf
-                        <!-- Status Session -->
-                        <x-auth-session-status class="mb-4" :status="session('status')" />
-
-                        <div class="modal-body">
-                            <p class="text-center">Silahkan memasukan Email dan Password</p>
-
-                            <!-- Email Address -->
-                            <div class="mb-4">
-                                <x-input-label for="email" :value="__('Email')" />
-                                <input type="email" class="form-control rounded-pill" id="email" name="email" placeholder="Masukan email anda..." :value="old('email')" required autofocus autocomplete="username">
-                                <x-input-error :messages="$errors->get('email')" class="mt-2" />
-                            </div>
-
-                            <!-- Password -->
-                            <div class="mb-4">
-                                <x-input-label for="password" :value="__('Password')" />
-                                <input type="password" class="form-control rounded-pill" id="password" name="password" placeholder="Masukan password anda" required autocomplete="current-password">
-                                <x-input-error :messages="$errors->get('password')" class="mt-2" />
-                            </div>
-
-                            <!-- Remember Me -->
-                            <div class="form-check mt-3 mb-3 text-center">
-                                <input id="remember_me" type="checkbox" class="form-check-input rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" name="remember">
-                                <label for="remember_me" class="form-check-label text-sm text-gray-600">{{ __('Remember me') }}</label>
-                            </div>
-                        </div>
-
-                        <div class="modal-footer border-0 justify-content-center">
-                            <button type="submit" class="btn btn-success w-100 rounded-pill">Login</button>
-                        </div>
-
-                        <!-- Forgot Password -->
-                        <div class="text-center mt-3">
-                            @if (Route::has('password.request'))
-                                <a class="text-sm text-gray-600 hover:text-gray-900" href="{{ route('password.request') }}">
-                                    {{ __('Forgot your password?') }}
-                                </a>
-                            @endif
-                        </div>
-                    </form>
                 </div>
-
-                <!-- Bagian Kanan untuk Gambar -->
-                <div class="col-md-6 d-none d-md-block p-0">
-                    <img src="/path/to/image.png" alt="Image" class="img-fluid h-100">
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 
 <script>
     $(document).ready(function() {

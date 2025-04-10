@@ -163,61 +163,41 @@
 </head>
 <body>
     @include('components.navbar')
+    @include('components.aside')
 
     <div class="d-flex">
-        <!-- Sidebar -->
-        <aside class="sidebar rounded-3" id="sidebar">
-            <a href="{{ route('dashboard') }}" class="d-flex align-items-center py-2 active">
-                <i class="fas fa-home ms-2 me-3"></i>
-                <span>Dashboard</span>
-            </a>
-            <a href="{{ route('board.index') }}" class="d-flex align-items-center py-2">
-                <i class="fas fa-clipboard-list ms-2 me-3"></i>
-                <span>Papan Status Senjata</span>
-            </a>
-            <a href="{{ route('personnels.index') }}" class="d-flex align-items-center py-2">
-                <i class="fas fa-user ms-2 me-3"></i>
-                <span>Data Personel</span>
-            </a>
-            <a href="{{ route('weapons.index') }}" class="d-flex align-items-center py-2">
-                <i class="fas fa-sitemap ms-2 me-3"></i>
-                <span>Data Senjata</span>
-            </a>
-            <a href="{{ route('admin.index') }}" class="d-flex align-items-center py-2">
-                <i class="fas fa-lock ms-2 me-3"></i>
-                <span>Admin</span>
-            </a>
-        </aside>
 
         <div class="content flex-grow-1" id="mainContent">
             <!-- Sidebar Toggle Button -->
             @include('components.togglebutton')
+
+            <!-- Content -->
             <div class="container mt-4">
-                <h2>Dashboard</h2>
-                <p>Tampilan dashboard Senjata</p>
+                <h2>{{ __('messages.dashboard_title') }}</h2>
+                <p>{{ __('messages.dashboard_description') }}</p>
 
                 <div class="row">
                     <div class="col-md-6 col-lg-4 mb-3">
                         <div class="card">
                             <div class="card-body">
-                                <h5 class="card-title">Total Senjata</h5>
-                                <p>{{ $statuses->count() }} Senjata</p>
+                                <h5 class="card-title">{{ __('messages.total_weapons') }}</h5>
+                                <p>{{ $statuses->pluck('loadCellID')->unique()->count() }} Loadcell</p>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-6 col-lg-4 mb-3">
                         <div class="card">
                             <div class="card-body">
-                                <h5 class="card-title">Personel Aktif</h5>
-                                <p>{{ $statuses->unique('loadCellID')->count() }} Personel</p>
+                                <h5 class="card-title">{{ __('messages.active_personnel') }}</h5>
+                                <p>{{ $statuses->pluck('personnel_id')->count() }}</p>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-6 col-lg-4 mb-3">
                         <div class="card">
                             <div class="card-body">
-                                <h5 class="card-title">Status Terbaru</h5>
-                                <p>{{ $statuses->where('time_out', null)->count() }} Senjata aktif</p>
+                                <h5 class="card-title">{{ __('messages.latest_status') }}</h5>
+                                <p>{{ $statuses->where('time_out', null)->count() }} {{ __('messages.active_weapons') }}</p>
                             </div>
                         </div>
                     </div>
@@ -228,52 +208,47 @@
                     <table class="table table-bordered" id="dataTable">
                         <thead>
                             <tr>
-                                <th>No</th>
-                                <th>ID Senjata</th>
-                                <th>Nama Pengguna</th>
-                                <th>Tanggal</th>
-                                <th>Time In</th>
-                                <th>Time Out</th>
-                                <th>Durasi</th>
-                                <th>Status</th>
+                                <th>{{ __('messages.table_no') }}</th>
+                                <th>{{ __('messages.table_weapon_id') }}</th>
+                                <th>{{ __('messages.table_user_name') }}</th>
+                                <th>{{ __('messages.table_date') }}</th>
+                                <th>{{ __('messages.table_time_in') }}</th>
+                                <th>{{ __('messages.table_time_out') }}</th>
+                                <th>{{ __('messages.table_duration') }}</th>
+                                <th>{{ __('messages.table_status') }}</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            @foreach ($statuses as $index => $status)
-                            <tr>
-                                <td>{{ $index + 1 }}</td>
-                                <td>{{ $status->loadCellID }}</td>
-                                <td>{{ $status->personnel->nama_personel ?? 'N/A' }}</td>
-                                <td>{{ $status->tanggal }}</td>
-                                <td>{{ $status->time_in }}</td>
-                                <td>{{ $status->time_out ?? 'Masih aktif' }}</td>
-                                <td>{{ $status->duration ?? 'N/A' }}</td>
-                                <td>
-                                    @if ($status->time_out)
-                                        <span class="badge bg-success">Selesai</span>
-                                    @else
-                                        <span class="badge bg-warning">Aktif</span>
-                                    @endif
-                                </td>
-                            </tr>
-                            @endforeach
+                        <tbody id="statusTableBody">
+                            <!-- Data will be populated by JavaScript -->
                         </tbody>
                     </table>
                 </div>
             </div>
-        </div>
-    </div>
 
-    <!-- Sidebar Toggle Script -->
-    <script>
-        document.getElementById("sidebarToggle").onclick = function() {
-            document.getElementById("sidebar").classList.toggle("closed");
-            document.getElementById("mainContent").classList.toggle("full");
-        };
-
-        document.querySelector('.navbar-toggler').addEventListener('click', function() {
-            document.getElementById("sidebar").classList.toggle("open");
-        });
-    </script>
+            <script>
+                // Fetch data from API and populate the dashboard
+                fetch('/api/dashboard')
+                    .then(response => response.json())
+                    .then(data => {
+                        const tableBody = document.getElementById('statusTableBody');
+                        data.forEach((status, index) => {
+                            const row = document.createElement('tr');
+                            row.innerHTML = `
+                                <td>${index + 1}</td>
+                                <td>${status.loadCellID}</td>
+                                <td>${status.personnel ? status.personnel.nama : 'N/A'}</td>
+                                <td>${status.tanggal}</td>
+                                <td>${status.time_in}</td>
+                                <td>${status.time_out ?? '{{ __('messages.status_active') }}'}</td>
+                                <td>${status.time_out ? Math.abs(new Date(status.time_out) - new Date(status.time_in)) / 60000 : 'N/A'}</td>
+                                <td>
+                                    ${status.time_out ? '<span class="badge bg-success">{{ __('messages.status_completed') }}</span>' : '<span class="badge bg-warning">{{ __('messages.status_active') }}</span>'}
+                                </td>
+                            `;
+                            tableBody.appendChild(row);
+                        });
+                    })
+                    .catch(error => console.error('Error fetching data:', error));
+            </script>
 </body>
 </html>

@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/fontawesome/css/all.min.css') }}">
     <link href="{{ asset('assets/datatables/datatables.min.css') }}" rel="stylesheet">
-    <script href="{{ asset('assets/datatables/datatables.min.js') }}"></script>
     <link rel="icon" href="{{ asset('assets/img/logo/icon-logo-website.png') }}" type="image/png">
     <style>
         body {
@@ -141,54 +140,25 @@
 </head>
 <body>
     @include('components.navbar')
-
-    <div class="d-flex">
-        <aside class="sidebar rounded-3" id="sidebar">
-            <a href="{{ route('dashboard') }}" class="d-flex align-items-center py-2">
-                <i class="fas fa-home ms-2 me-3"></i>
-                <span>Dashboard</span>
-            </a>
-            <a href="{{ route('board.index') }}" class="d-flex align-items-center py-2">
-                <i class="fas fa-clipboard-list ms-2 me-3"></i>
-                <span>Papan Status Senjata</span>
-            </a>
-            <a href="{{ route('personnels.index') }}" class="d-flex align-items-center py-2 active">
-                <i class="fas fa-user ms-2 me-3"></i>
-                <span>Data Personel</span>
-            </a>
-            <a href="{{ route('weapons.index') }}" class="d-flex align-items-center py-2">
-                <i class="fas fa-sitemap ms-2 me-3"></i>
-                <span>Data Senjata</span>
-            </a>
-            <a href="{{ route('admin.index') }}" class="d-flex align-items-center py-2">
-                <i class="fas fa-lock ms-2 me-3"></i>
-                <span>Admin</span>
-            </a>
-        </aside>
+    @include('components.aside')
 
         <div class="content flex-grow-1" id="mainContent">
             @include('components.togglebutton')
 
             <div class="container mt-2">
-                <h2>Data Personel</h2>
-                <p>Daftar lengkap data personel yang terdaftar dalam sistem.</p>
+                <h2>{{ __('messages.personnel_title') }}</h2>
+                <p>{{ __('messages.personnel_description') }}</p>
 
                 <div class="row">
                     <div class="col-md-4">
                         <div class="card p-2 d-flex flex-column justify-content-center">
-                            <div class="card-title">Total Personel</div>
+                            <div class="card-title">{{ __('messages.personnel_total') }}</div>
                             <div class="card-body fs-1">{{ $personnel->count() }}</div>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="card p-2 d-flex flex-column justify-content-center">
-                            <div class="card-title">Senjata Tersedia</div>
-                            <div class="card-body fs-1">{{ $weapons->count() }}</div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="card p-2 d-flex flex-column justify-content-center">
-                            <div class="card-title">Personel Aktif</div>
+                            <div class="card-title">{{ __('messages.personnel_active') }}</div>
                             <div class="card-body fs-1">{{ $personnel->count() }}</div>
                         </div>
                     </div>
@@ -196,22 +166,22 @@
 
                 <div class="mb-3 text-start">
                     <a href="{{ route('personnels.create') }}" class="btn btn-primary me-2" id="addPersonnelButton">
-                        <i class="fas fa-plus"></i> Tambah Personel
+                        <i class="fas fa-plus"></i> {{ __('messages.personnel_add') }}
                     </a>
                 </div>
 
                 <table class="table table-striped table-hover table-bordered align-middle" id="personnelTable" style="width: 100%; font-size: 14px;">
                     <thead class="table-white">
                         <tr>
-                            <th>No</th>
-                            <th>ID Senjata</th>
-                            <th>ID Pengguna</th>
-                            <th>Nama Pengguna</th>
-                            <th>Pangkat</th>
-                            <th>NRP</th>
-                            <th>Jabatan</th>
-                            <th>Kesatuan</th>
-                            <th>Aksi</th>
+                            <th>{{ __('messages.table_no') }}</th>
+                            <th>{{ __('messages.table_weapon_id') }}</th>
+                            <th>{{ __('messages.table_user_id') }}</th>
+                            <th>{{ __('messages.table_user_name') }}</th>
+                            <th>{{ __('messages.table_rank') }}</th>
+                            <th>{{ __('messages.table_nrp') }}</th>
+                            <th>{{ __('messages.table_position') }}</th>
+                            <th>{{ __('messages.table_unit') }}</th>
+                            <th>{{ __('messages.table_action') }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -232,7 +202,7 @@
                                 <form action="{{ route('personnels.destroy', $p->personnel_id) }}" method="POST" style="display:inline;">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?')">
+                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('{{ __('messages.Are you sure you want to delete this data?') }}')">
                                         <i class="fas fa-trash-alt"></i>
                                     </button>
                                 </form>
@@ -254,42 +224,42 @@
                         responsive: true, // Aktifkan responsif
                         autoWidth: false, // Nonaktifkan auto width
                         language: {
-                            search: '<i class="fas fa-search"></i> Cari:', // Custom placeholder untuk pencarian
-                            lengthMenu: "Tampilkan _MENU_ data", // Custom teks untuk dropdown lengthMenu
-                            info: "Menampilkan _START_ hingga _END_ dari _TOTAL_ data", // Custom teks info
-                            infoFiltered: "(disaring dari total _MAX_ data)", // Custom teks info filtered
+                            search: '<i class="fas fa-search"></i> {{ __("messages.datatable_search") }}', // Custom placeholder untuk pencarian
+                            lengthMenu: "{{ __('messages.datatable_length_menu') }}", // Custom teks untuk dropdown lengthMenu
+                            info: "{{ __('messages.datatable_info') }}", // Custom teks info
+                            infoFiltered: "{{ __('messages.datatable_info_filtered') }}", // Custom teks info filtered
                             paginate: {
-                                first: '<i class="fas fa-step-backward"></i> Pertama', // Custom teks untuk tombol first
-                                last: '<i class="fas fa-step-forward"></i> Terakhir', // Custom teks untuk tombol last
-                                next: '<i class="fas fa-chevron-right"></i> Berikutnya', // Custom teks untuk tombol next
-                                previous: '<i class="fas fa-chevron-left"></i> Sebelumnya' // Custom teks untuk tombol previous
+                                first: "{{ __('messages.datatable_first') }}", // Custom teks untuk tombol first
+                                last: "{{ __('messages.datatable_last') }}", // Custom teks untuk tombol last
+                                next: "{{ __('messages.datatable_next') }}", // Custom teks untuk tombol next
+                                previous: "{{ __('messages.datatable_previous') }}" // Custom teks untuk tombol previous
                             }
                         },
                         dom: '<"d-flex justify-content-between align-items-center mb-3"Bf>t<"d-flex justify-content-between align-items-center mt-3"ip>', // Custom layout
                         buttons: [
                             {
                                 extend: 'copy',
-                                text: '<i class="fas fa-copy"></i> Salin',
+                                text: '<i class="fas fa-copy"></i> {{ __("messages.datatable_copy") }}',
                                 className: 'btn btn-secondary btn-sm',
-                                title: 'Data Personel - Salin'
+                                title: '{{ __("messages.datatable_copy") }}'
                             },
                             {
                                 extend: 'csv',
-                                text: '<i class="fas fa-file-csv"></i> Ekspor CSV',
+                                text: '<i class="fas fa-file-csv"></i> {{ __("messages.datatable_csv") }}',
                                 className: 'btn btn-primary btn-sm',
-                                title: 'Data Personel - CSV'
+                                title: '{{ __("messages.datatable_csv") }}'
                             },
                             {
                                 extend: 'excel',
-                                text: '<i class="fas fa-file-excel"></i> Ekspor Excel',
+                                text: '<i class="fas fa-file-excel"></i> {{ __("messages.datatable_excel") }}',
                                 className: 'btn btn-success btn-sm',
-                                title: 'Data Personel - Excel'
+                                title: '{{ __("messages.datatable_excel") }}'
                             },
                             {
                                 extend: 'pdf',
-                                text: '<i class="fas fa-file-pdf"></i> Ekspor PDF',
+                                text: '<i class="fas fa-file-pdf"></i> {{ __("messages.datatable_pdf") }}',
                                 className: 'btn btn-danger btn-sm',
-                                title: 'Data Personel - PDF',
+                                title: '{{ __("messages.datatable_pdf") }}',
                                 customize: function(doc) {
                                     doc.defaultStyle.fontSize = 10; // Ukuran font PDF
                                     doc.styles.tableHeader.fontSize = 12; // Ukuran font header tabel
@@ -297,16 +267,16 @@
                             },
                             {
                                 extend: 'print',
-                                text: '<i class="fas fa-print"></i> Cetak',
+                                text: '<i class="fas fa-print"></i> {{ __("messages.datatable_print") }}',
                                 className: 'btn btn-info btn-sm',
-                                title: 'Data Personel - Cetak',
+                                title: '{{ __("messages.datatable_print") }}',
                                 customize: function(win) {
                                     $(win.document.body).css('font-size', '12px'); // Ukuran font cetak
                                     $(win.document.body).find('table').addClass('compact').css('font-size', 'inherit');
                                 }
                             }
                         ],
-                        lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "Semua"]], // Custom dropdown lengthMenu
+                        lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "{{ __('messages.datatable_length_menu') }}"]], // Custom dropdown lengthMenu
                         pageLength: 10, // Default jumlah data per halaman
                         order: [[0, 'asc']], // Default pengurutan berdasarkan kolom pertama (No)
                         initComplete: function() {
@@ -321,16 +291,5 @@
                 }
             });
         </script>
-
-
-    <script>
-        document.getElementById('sidebarToggle').addEventListener('click', function () {
-            const sidebar = document.querySelector('.sidebar');
-            const content = document.querySelector('.content');
-
-            sidebar.classList.toggle('closed');
-            content.classList.toggle('full');
-        });
-    </script>
 </body>
 </html>

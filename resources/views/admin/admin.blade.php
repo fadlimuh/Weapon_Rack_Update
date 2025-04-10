@@ -92,6 +92,15 @@
             border: 1px solid #dee2e6;
         }
 
+        .btn {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px); /* Tombol akan sedikit naik */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Tambahkan bayangan */
+        }
+
         /* Responsive Styles */
         @media (max-width: 768px) {
             .sidebar {
@@ -141,44 +150,23 @@
 </head>
 <body>
     @include('components.navbar')
+    @include('components.aside')
     <div class="d-flex">
-        <aside class="sidebar rounded-3" id="sidebar">
-            <a href="{{ route('dashboard') }}" class="d-flex align-items-center py-2">
-                <i class="fas fa-home ms-2 me-3"></i>
-                <span>Dashboard</span>
-            </a>
-            <a href="{{ route('board.index') }}" class="d-flex align-items-center py-2">
-                <i class="fas fa-clipboard-list ms-2 me-3"></i>
-                <span>Papan Status Senjata</span>
-            </a>
-            <a href="{{ route('personnels.index') }}" class="d-flex align-items-center py-2">
-                <i class="fas fa-user ms-2 me-3"></i>
-                <span>Data Personel</span>
-            </a>
-            <a href="{{ route('weapons.index') }}" class="d-flex align-items-center py-2">
-                <i class="fas fa-sitemap ms-2 me-3"></i>
-                <span>Data Senjata</span>
-            </a>
-            <a href="{{ route('admin.index') }}" class="d-flex align-items-center py-2 active">
-                <i class="fas fa-lock ms-2 me-3"></i>
-                <span>Admin</span>
-            </a>
-        </aside>
         <div class="content flex-grow-1" id="mainContent">
             <!-- Sidebar Toggle Button -->
             @include('components.togglebutton')
 
             <div class="container-fluid p-1">
                 <div class="container mt-2">
-                    <h2>Admin Dashboard</h2>
-                    <p>Tampilan data Admin</p>
+                    <h2>{{ __('messages.admin_dashboard_title') }}</h2>
+                    <p>{{ __('messages.admin_dashboard_description') }}</p>
                     <table class="table table-bordered table-custom">
                         <thead>
                             <tr>
-                                <th>No</th>
-                                <th>Nama Pengguna</th>
-                                <th>Email</th>
-                                <th>Aksi</th>
+                                <th>{{ __('messages.table_no') }}</th>
+                                <th>{{ __('messages.table_user_name') }}</th>
+                                <th>{{ __('messages.table_email') }}</th>
+                                <th>{{ __('messages.table_action') }}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -188,11 +176,11 @@
                                 <td>{{ $user->name }}</td>
                                 <td>{{ $user->email }}</td>
                                 <td style="text-align: center; display: flex; justify-content: center; align-items: center; gap: 15px;">
-                                    <button type="button" class="btn btn-success btn-sm" title="Edit User" style="display: flex; align-items: center;" onclick="window.location.href='{{ route('admin.edit', $user->id) }}'">
-                                        <i class="fas fa-pencil-alt" style="margin-right: 5px;"></i> Edit
+                                    <button type="button" class="btn btn-success btn-sm" title="{{ __('messages.button_edit') }}" style="display: flex; align-items: center;" onclick="window.location.href='{{ route('admin.edit', $user->id) }}'">
+                                        <i class="fas fa-pencil-alt" style="margin-right: 5px;"></i> {{ __('messages.button_edit') }}
                                     </button>
-                                    <button type="button" class="btn btn-danger btn-sm" title="Delete User" style="display: flex; align-items: center;" onclick="confirmDelete({{ $user->id }});">
-                                        <i class="fas fa-trash-alt" style="margin-right: 5px;"></i> Hapus
+                                    <button type="button" class="btn btn-danger btn-sm" title="{{ __('messages.button_delete') }}" style="display: flex; align-items: center;" onclick="confirmDelete({{ $user->id }});">
+                                        <i class="fas fa-trash-alt" style="margin-right: 5px;"></i> {{ __('messages.button_delete') }}
                                     </button>
                                     <!-- Form untuk penghapusan -->
                                     <form id="delete-form-{{ $user->id }}" action="{{ route('admin.destroy', $user->id) }}" method="POST" style="display: none;">
@@ -204,14 +192,14 @@
                                         function confirmDelete(userId) {
                                             // SweetAlert Konfirmasi
                                             Swal.fire({
-                                                title: 'Yakin ingin menghapus admin ini?',
-                                                text: "Data tidak bisa dikembalikan setelah dihapus!",
+                                                title: '{{ __('messages.delete_confirmation_title') }}',
+                                                text: '{{ __('messages.delete_confirmation_text') }}',
                                                 icon: 'warning',
                                                 showCancelButton: true,
                                                 confirmButtonColor: '#d33',
                                                 cancelButtonColor: '#3085d6',
-                                                confirmButtonText: 'Ya, Hapus!',
-                                                cancelButtonText: 'Batal'
+                                                confirmButtonText: '{{ __('messages.delete_confirmation_confirm') }}',
+                                                cancelButtonText: '{{ __('messages.delete_confirmation_cancel') }}'
                                             }).then((result) => {
                                                 if (result.isConfirmed) {
                                                     // Submit Form untuk Penghapusan
@@ -223,24 +211,24 @@
                                     @if(session('success'))
                                     <script>
                                         Swal.fire({
-                                            title: 'Berhasil!',
+                                            title: '{{ __('messages.delete_success_title') }}',
                                             text: '{{ session('success') }}',
                                             icon: 'success',
                                             confirmButtonText: 'OK'
                                         });
                                     </script>
-                                @endif
+                                    @endif
 
-                                @if(session('error'))
+                                    @if(session('error'))
                                     <script>
                                         Swal.fire({
-                                            title: 'Gagal!',
+                                            title: '{{ __('messages.delete_error_title') }}',
                                             text: '{{ session('error') }}',
                                             icon: 'error',
                                             confirmButtonText: 'OK'
                                         });
                                     </script>
-                                @endif
+                                    @endif
                                 </td>
                             </tr>
                             @endforeach
@@ -248,20 +236,12 @@
                     </table>
                     <div class="d-flex justify-content-end mb-3">
                         <a href="{{ route('admin.create') }}" class="btn btn-success">
-                            <i class="fas fa-plus"></i> Tambah Admin
+                            <i class="fas fa-plus"></i> {{ __('messages.button_add_admin') }}
                         </a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <script>
-        document.getElementById('sidebarToggle').addEventListener('click', function() {
-            const sidebar = document.getElementById('sidebar');
-            const mainContent = document.getElementById('mainContent');
-            sidebar.classList.toggle('closed');
-            mainContent.classList.toggle('full');
-        });
-    </script>
 </body>
 </html>
