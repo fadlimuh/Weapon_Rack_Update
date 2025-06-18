@@ -19,8 +19,13 @@ class WeaponController extends Controller
         return response()->json(['success' => true, 'data' => $weapons]);
     }
 
+
     public function store(Request $request)
     {
+        // Logging data request sebelum validasi
+        Log::info('Data request sebelum validasi:', $request->all());
+
+        // Validasi input
         $validated = $request->validate([
             'loadCellID' => 'required|integer',
             'slaveNumber' => 'required|integer',
@@ -30,6 +35,10 @@ class WeaponController extends Controller
         ]);
 
         try {
+            // Logging data yang divalidasi
+            Log::info('Data yang divalidasi:', $validated);
+
+            // Simpan atau perbarui data
             $weapon = Weapons::updateOrCreate(
                 ['loadCellID' => $validated['loadCellID']], // Kolom unik
                 [
@@ -37,15 +46,32 @@ class WeaponController extends Controller
                     'status' => $validated['status'],
                     'weight' => $validated['weight'],
                     'rackNumber' => $validated['rackNumber'],
+                    'timestamp' => now(), // Tambahkan timestamp saat menyimpan
                 ]
             );
 
+            // Logging data yang berhasil disimpan
+            Log::info('Data berhasil disimpan:', ['data' => $weapon]);
+
+            // Kembalikan response sukses
             return response()->json([
                 'success' => true,
                 'message' => 'Data berhasil disimpan',
                 'data' => $weapon,
             ]);
+        } catch (QueryException $qe) {
+            // Tangani error database
+            Log::error('Kesalahan database:', [
+                'error' => $qe->getMessage(),
+                'sql' => $qe->getSql(),
+                'bindings' => $qe->getBindings(),
+            ]);
+            return response()->json([
+                'success' => false,
+                'message' => $qe->getMessage(),
+            ], 500);
         } catch (\Exception $e) {
+            // Tangani error umum
             Log::error('Gagal menyimpan data:', [
                 'error' => $e->getMessage(),
                 'input' => $request->all(),

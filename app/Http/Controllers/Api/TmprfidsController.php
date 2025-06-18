@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\tmprfids;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 
 class TmprfidsController extends Controller
 {
@@ -28,33 +29,35 @@ class TmprfidsController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+
     public function store(Request $request)
     {
-        // Validasi input
-        $validatedData = $request->validate([
-            'nokartu' => 'required|string',
-        ]);
+        try {
+            // Validasi input
+            $request->validate([
+                'nokartu' => 'required|string',
+            ]);
 
-        // Periksa apakah request berasal dari IP 192.168.1.10
-        if ($request->ip() !== '192.168.1.10') {
+            // Hapus semua data yang ada di tabel tmprfids
+            tmprfids::truncate();
+
+            // Simpan data baru
+            $tmprfid = tmprfids::create([
+                'nokartu' => $request->nokartu,
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Data nokartu berhasil disimpan.',
+                'data' => $tmprfid
+            ], 200);
+        } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Akses hanya diizinkan dari IP 192.168.1.10.'
-            ], 403);
+                'message' => 'Terjadi kesalahan pada server.',
+                'error' => $e->getMessage(),
+            ], 500);
         }
-
-        // Cari data tmprfid yang ada (jika ada)
-        $tmprfid = tmprfids::firstOrNew([]); // Ambil data pertama atau buat baru jika tidak ada
-
-        // Update nilai nokartu
-        $tmprfid->nokartu = $request->nokartu;
-        $tmprfid->save();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Data nokartu berhasil diperbarui.',
-            'data' => $tmprfid
-        ], 200);
     }
 
     /**

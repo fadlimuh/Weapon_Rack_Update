@@ -24,14 +24,13 @@ class personnels extends Model
     ];
 
     protected $primaryKey = 'personnel_id';
-
     public function weapon()
     {
-        return $this->belongsTo(weapons::class, 'loadCellID', 'loadCellID');
+        return $this->hasOne(weapons::class, 'loadCellID', 'loadCellID'); // Sesuaikan foreign key
     }
 
-    public function tmprfid()
-    {
-        return $this->belongsTo(tmprfids::class, 'nokartu', 'nokartu');
-    }
+    // public function tmprfid()
+    // {
+    //     return $this->belongsTo(tmprfids::class, 'nokartu', 'nokartu');
+    // }
 }

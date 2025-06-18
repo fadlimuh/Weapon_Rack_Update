@@ -106,6 +106,6 @@ class PersonnelsController extends Controller
     {
         $personnel = personnels::findOrFail($id);
         $personnel->delete();
-        return redirect()->route('personnel.index')->with('success', 'Data berhasil dihapus');
+        return redirect()->route('personnels.index')->with('success', 'Data berhasil dihapus');
     }
 }

@@ -12,6 +12,7 @@ class StatusController extends Controller
     /**
      * Display a listing of the resource.
      */
+
     public function index()
     {
         // Ambil loadcellid dari tabel personnels
@@ -21,7 +22,11 @@ class StatusController extends Controller
         $loadcell_id = $loadcell_id->merge(weapons::pluck('loadCellID'));
 
         // Ambil semua data status dari database
-        $statuses = Status::whereIn('loadCellID', $loadcell_id)->with('personnel', 'personnel.weapon')->get();
+        $statuses = Status::whereIn('loadCellID', $loadcell_id)
+            ->with(['personnel' => function ($query) {
+                $query->select('loadCellID', 'nama'); // Ambil hanya kolom yang diperlukan
+            }, 'personnel.weapon'])
+            ->get();
 
         // Kirim data ke view dashboard
         return view('dashboard', compact('statuses'));

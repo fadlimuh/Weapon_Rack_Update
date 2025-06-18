@@ -102,7 +102,7 @@
 
         <!-- Bagian Kanan untuk Gambar -->
         <div class="col-md-6 d-none d-md-block p-0">
-            <img src="/path/to/image.png" alt="Image" class="img-fluid">
+            <img src="{{ asset('assets/img/landingpages/rack v3 landing page.jpg') }}" alt="Image" class="img-fluid">
         </div>
     </div>
 </div>

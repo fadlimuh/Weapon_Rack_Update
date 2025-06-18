@@ -15,7 +15,7 @@ class LanguageSwitcher
             Session::put('locale', $lang);
         }
 
-        $locale = Session::get('locale', config('id'));
+        $locale = Session::get('locale', config('app.locale'));
         App::setLocale($locale);
 
         return $next($request);

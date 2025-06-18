@@ -1,4 +1,31 @@
 <style>
+        /* Pastikan konten utama tidak overflow */
+    .content {
+        overflow-x: hidden; /* Menghindari scroll horizontal */
+        margin-left: 250px; /* Sesuaikan dengan lebar sidebar */
+        transition: margin-left 0.3s ease-in-out; /* Animasi saat sidebar dibuka/tutup */
+    }
+
+    /* Jika sidebar ditutup */
+    .content.full {
+        margin-left: 0; /* Konten mengambil lebar penuh */
+    }
+
+    /* Pastikan elemen dalam kolom tidak overflow */
+    #rack-data {
+        display: flex;
+        flex-wrap: wrap; /* Membungkus elemen jika terlalu panjang */
+        overflow-x: hidden; /* Menghindari scroll horizontal */
+    }
+
+    .row.g-3 {
+        margin: 0; /* Menghindari margin yang menyebabkan overflow */
+    }
+
+    .row.g-3 > div {
+        flex: 0 0 auto; /* Pastikan elemen tetap dalam baris */
+    }
+
     .indicator-container {
         display: flex;
         justify-content: center;

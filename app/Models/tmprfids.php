@@ -18,5 +18,5 @@ class tmprfids extends Model
         'nokartu', // Kolom yang bisa diisi
     ];
 
-    public $timestamps = true; // Gunakan timestamps
+    public $timestamps = false; // Gunakan timestamps
 }

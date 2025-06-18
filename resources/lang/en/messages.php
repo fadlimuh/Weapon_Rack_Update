@@ -1,6 +1,45 @@
 <?php
 
 return [
+    // halaman home
+    // Navbar
+    'language' => 'Language',
+    'start' => 'Start',
+    // Footer Links
+    'footer_about_research' => 'About Research',
+    'footer_documentation' => 'Documentation',
+    'footer_about_us' => 'About Us',
+
+    // Modal Login
+    'login_title' => 'LOGIN',
+    'login_description' => 'Please enter your Email and Password',
+    'email' => 'Email',
+    'password' => 'Password',
+    'remember_me' => 'Remember me',
+    'forgot_password' => 'Forgot your password?',
+    'placeholder_email' => 'Enter your email...',
+    'placeholder_password' => 'Enter your password...',
+
+    // Hero Section
+    'hero_title' => 'MONITORING AUTOMATED WEAPON RACK V2',
+    'hero_description' => 'Easily monitor and control access to weapons. This system gives you full control over who can access your weapons, anytime.',
+
+    // Dokumentasi Section
+    'documentation_title' => 'Weapon Rack Documentation',
+    'documentation_description_1' => 'Documentation description 1',
+    'documentation_description_2' => 'Documentation description 2',
+    'documentation_description_3' => 'Documentation description 3',
+
+    // Video Section
+    'video_documentation_title' => 'Weapon Rack Video Documentation',
+    'video_description_1' => 'Video documentation 1',
+    'video_description_2' => 'Video documentation 2',
+    'video_description_3' => 'Video documentation 3',
+
+    // Tentang Kami Section
+    'about_us_title' => 'About Us',
+    'about_us_description' => 'Center of Excellence Sustainable Technology and Applied Sciences Research Group (CoE STAS-RG) plays a role in conducting Research, Consulting, Project Implementation, SCM Software Solution, Customization, Industrial Attachment & Certification, Training For Professional & Student, Seminar & Expo, Gathering & Book Review, Publications, and Follow-Up of Scientific Objectives.',
+
     // aside
     'menu_dashboard' => 'Dashboard',
     'menu_board' => 'Weapon Status Board',
@@ -63,6 +102,10 @@ return [
     'datatable_excel' => 'Export Excel',
     'datatable_pdf' => 'Export PDF',
     'datatable_print' => 'Print',
+    'confirmation_are_you_sure' => 'Are you sure?',
+    'confirmation_action_undone' => 'This action cannot be undone.',
+    'confirmation_yes_delete' => 'Yes, delete it!',
+    'confirmation_cancel' => 'Cancel',
 
     // weapons
     'table_rack' => 'Rack',

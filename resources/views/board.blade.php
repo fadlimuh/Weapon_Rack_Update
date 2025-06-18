@@ -24,8 +24,8 @@
         /* Sidebar */
         .sidebar {
             height: 100vh;
-            background-color: #fff;
-            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+            background-color: #f8f9fa;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             position: fixed;
             z-index: 1000;
             width: 250px;
@@ -38,11 +38,11 @@
 
         .sidebar a {
             color: #333;
+            text-decoration: none;
             display: flex;
             align-items: center;
             padding: 12px 20px;
             border-bottom: 1px solid #e9ecef;
-            transition: background-color 0.3s ease;
         }
 
         .sidebar a:hover, .sidebar a.active {
@@ -182,6 +182,28 @@
         .card-status.secondary {
             background-color: gray;
         }
+        #racksTable {
+            max-height: 500px;
+            overflow-y: scroll;
+            overflow-x: hidden;
+        }
+
+        #rack-data {
+            width: 100%;
+            flex-wrap: wrap;
+            overflow-x: hidden;
+            margin: 0;
+        }
+
+        .row.g-3 {
+            margin: 0;
+        }
+
+        .row.g-3 > div {
+            flex: 0 0 auto;
+        }
+
+
 
         /* Responsive Styles */
         @media (max-width: 768px) {
@@ -240,12 +262,11 @@
 
         @media (max-width: 480px) {
             .sidebar {
-                width: 160px;
+                width: 200px;
             }
 
             .sidebar a {
-                padding: 8px;
-                font-size: 14px;
+                padding: 10px;
             }
 
             .navbar .navbar-brand {
@@ -284,21 +305,20 @@
             <!-- Sidebar Toggle Button for Mobile -->
             @include('components.togglebutton')
 
-            <nav style="margin-top: 10px; margin-left: 16px;" aria-label="breadcrumb mb-3">
+            <nav class="mt-2 ms-3" aria-label="breadcrumb mb-3">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
                     <li class="breadcrumb-item active" aria-current="page" style="font-weight: bold;"><a href="{{ route('board.index') }}">Papan Status</a></li>
                 </ol>
             </nav>
 
-            <div class="container-fluid p-3" id="contentArea" style="overflow-x: hidden;">
-                <h2>Status Senjata</h2>
+            <div class="container-fluid" id="contentArea" style="overflow-x: hidden;">
+                <h2 class="mb-4">Status Senjata</h2>
                 <div class="row">
                 <!-- Kolom Kiri: Deskripsi Papan -->
                     <div class="col-md-4">
                         <div class="card shadow-sm h-100">
-                            <img src="https://via.placeholder.com/200x150" class="card-img-top" alt="{{ __('board_title') }}" style="max-width: 100%;">
-                            <div class="card-body">
+                            <div class="card-body d-flex flex-column justify-content-start">
                                 <h6 class="card-title">{{ __('messages.board_title') }}</h6>
                                 <p class="card-text">
                                     {{ __('messages.board_description') }}
@@ -312,7 +332,7 @@
 
                     <!-- Kolom Kanan: Data Rak -->
                     <div class="col-md-8 col-sm-12">
-                        <div class="card shadow-3">
+                        <div class="card">
                             <div class="card-body">
                                 <h6 class="card-title">Data Rak</h6>
                                 <div class="table-responsive" id="racksTable">

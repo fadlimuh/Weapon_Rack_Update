@@ -28,6 +28,9 @@
                 </div>
 
                 <style>
+                    .navbar {
+                        z-index: 1030;
+                    }
                     /* Dropdown item hover effects */
                     .dropdown-item:hover img {
                         transform: scale(1.2); /* Membesarkan ikon bendera saat hover */

@@ -1,6 +1,47 @@
 <?php
 
 return [
+    //  halaman home
+    // Navbar
+    'language' => 'Bahasa',
+    'start' => 'Mulai',
+
+        // Footer Links
+    'footer_about_research' => 'Tentang Penelitian',
+    'footer_documentation' => 'Dokumentasi',
+    'footer_about_us' => 'Tentang Kami',
+
+    // Modal Login
+    'login_title' => 'LOGIN',
+    'login_description' => 'Silahkan memasukan Email dan Password',
+    'email' => 'Email',
+    'password' => 'Password',
+    'remember_me' => 'Ingat saya',
+    'forgot_password' => 'Lupa kata sandi Anda?',
+    'placeholder_email' => 'Masukkan email Anda...',
+    'placeholder_password' => 'Masukkan password Anda...',
+
+
+    // Hero Section
+    'hero_title' => 'MONITORING AUTOMATED WEAPON RACK V2',
+    'hero_description' => 'Memudahkan memantau dan mengontrol akses ke senjata. Sistem ini memberikan Anda kontrol penuh atas siapa yang dapat mengakses senjata Anda, kapan saja.',
+
+    // Dokumentasi Section
+    'documentation_title' => 'Dokumentasi Weapon Rack',
+    'documentation_description_1' => 'Deskripsi dokumentasi 1',
+    'documentation_description_2' => 'Deskripsi dokumentasi 2',
+    'documentation_description_3' => 'Deskripsi dokumentasi 3',
+
+    // Video Section
+    'video_documentation_title' => 'Video Dokumentasi Weapon Rack',
+    'video_description_1' => 'Video dokumentasi 1',
+    'video_description_2' => 'Video dokumentasi 2',
+    'video_description_3' => 'Video dokumentasi 3',
+
+    // Tentang Kami Section
+    'about_us_title' => 'Tentang Kami',
+    'about_us_description' => 'Center of Excellence Sustainable Technology and Applied Sciences Research Group (CoE STAS-RG) berperan untuk melakukan Research, Consulting, Project Implementation, SCM Software Solution, Customization, Industrial Attachment & Certification, Training For Professional & Student, Seminar & Expo, Gathering & Book Review, Publikasi serta Tindak Lanjut Obyektif Ilmiah.',
+
     // aside
     'menu_dashboard' => 'Dashboard',
     'menu_board' => 'Papan Status Senjata',
@@ -63,6 +104,10 @@ return [
     'datatable_excel' => 'Ekspor Excel',
     'datatable_pdf' => 'Ekspor PDF',
     'datatable_print' => 'Cetak',
+    'confirmation_are_you_sure' => 'Apakah Anda yakin?',
+    'confirmation_action_undone' => 'Tindakan ini tidak dapat dibatalkan.',
+    'confirmation_yes_delete' => 'Ya, hapus!',
+    'confirmation_cancel' => 'Batal',
 
     // weapons
     'table_rack' => 'Rak',
@@ -139,3 +184,5 @@ return [
     'form_password_confirmation' => 'Konfirmasi Password',
     'form_update' => 'Perbarui',
 ];
+
+

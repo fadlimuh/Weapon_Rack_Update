@@ -18,6 +18,7 @@
             padding: 0;
         }
 
+
         .sidebar {
             height: 100vh;
             background-color: #f8f9fa;
@@ -219,36 +220,54 @@
                             </tr>
                         </thead>
                         <tbody id="statusTableBody">
-                            <!-- Data will be populated by JavaScript -->
+                            <!-- Data akan diisi oleh JavaScript -->
                         </tbody>
                     </table>
                 </div>
             </div>
 
             <script>
-                // Fetch data from API and populate the dashboard
+            // Fetch data from API and populate the dashboard
+            function fetchData() {
                 fetch('/api/dashboard')
-                    .then(response => response.json())
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
                     .then(data => {
                         const tableBody = document.getElementById('statusTableBody');
-                        data.forEach((status, index) => {
-                            const row = document.createElement('tr');
-                            row.innerHTML = `
-                                <td>${index + 1}</td>
-                                <td>${status.loadCellID}</td>
-                                <td>${status.personnel ? status.personnel.nama : 'N/A'}</td>
-                                <td>${status.tanggal}</td>
-                                <td>${status.time_in}</td>
-                                <td>${status.time_out ?? '{{ __('messages.status_active') }}'}</td>
-                                <td>${status.time_out ? Math.abs(new Date(status.time_out) - new Date(status.time_in)) / 60000 : 'N/A'}</td>
-                                <td>
-                                    ${status.time_out ? '<span class="badge bg-success">{{ __('messages.status_completed') }}</span>' : '<span class="badge bg-warning">{{ __('messages.status_active') }}</span>'}
-                                </td>
-                            `;
-                            tableBody.appendChild(row);
-                        });
+                        tableBody.innerHTML = ''; // Kosongkan tabel sebelum menambahkan data baru
+
+                        if (Array.isArray(data) && data.length > 0) {
+                            data.forEach((status, index) => {
+                                const row = document.createElement('tr');
+                                row.innerHTML = `
+                                    <td>${index + 1}</td>
+                                    <td>${status.id_senjata}</td>
+                                    <td>${status.nama_pengguna}</td>
+                                    <td>${status.tanggal}</td>
+                                    <td>${status.time_in}</td>
+                                    <td>${status.time_out}</td>
+                                    <td>${status.durasi}</td>
+                                    <td>
+                                        ${status.status === 'Selesai'
+                                            ? '<span class="badge bg-success">Selesai</span>'
+                                            : '<span class="badge bg-warning">Aktif</span>'}
+                                    </td>
+                                `;
+                                tableBody.appendChild(row);
+                            });
+                        } else {
+                            tableBody.innerHTML = '<tr><td colspan="8" class="text-center">Data tidak tersedia</td></tr>';
+                        }
                     })
                     .catch(error => console.error('Error fetching data:', error));
+            }
+
+            // Panggil fetchData setiap 2 detik
+            setInterval(fetchData, 2000);
             </script>
 </body>
 </html>

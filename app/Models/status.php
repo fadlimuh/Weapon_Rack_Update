@@ -25,4 +25,20 @@ class status extends Model
     {
         return $this->belongsTo(personnels::class, 'loadCellID', 'loadCellID');
     }
+
+    // Accessors for formatting attributes
+    public function getTanggalAttribute($value)
+    {
+        return \Carbon\Carbon::parse($value)->format('Y-m-d');
+    }
+
+    public function getTimeInAttribute($value)
+    {
+        return \Carbon\Carbon::parse($value)->format('H:i:s');
+    }
+
+    public function getTimeOutAttribute($value)
+    {
+        return $value ? \Carbon\Carbon::parse($value)->format('H:i:s') : null;
+    }
 }

@@ -9,8 +9,13 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\WeaponsController;
 use App\Http\Controllers\NeedhelpController;
 use App\Http\Controllers\TmprfidsController;
-use App\Http\Controllers\PersonnelsController;  
+use App\Http\Controllers\PersonnelsController;
 use App\Http\Middleware\LanguageSwitcher;
+
+Route::get('/lang/{locale}', function ($locale) {
+    session(['locale' => $locale]);
+    return redirect()->back();
+})->name('lang.switch');
 
 Route::middleware([LanguageSwitcher::class])->group(function () {
     Route::get('/', function () {
@@ -38,8 +43,8 @@ Route::middleware([LanguageSwitcher::class])->group(function () {
         Route::put('/personnels/{id}', [PersonnelsController::class, 'update'])->name('personnels.update');
         Route::delete('/personnels/{id}', [PersonnelsController::class, 'destroy'])->name('personnels.destroy');
 
-        Route::get('/tmprfids', [TmprfidsController::class, 'index'])->name('tmprfids.index');
-        Route::delete('/tmprfids/{nokartu}', [TmprfidsController::class, 'destroy'])->name('tmprfids.destroy');
+
+        Route::resource('tmprfids', TmprfidsController::class);
 
         Route::get('/weapons', [WeaponsController::class, 'index'])->name('weapons.index');
 

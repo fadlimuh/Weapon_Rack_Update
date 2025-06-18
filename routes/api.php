@@ -2,13 +2,38 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\TmprfidsController;
 use App\Http\Controllers\Api\WeaponController;
-
+use App\Http\Controllers\Api\TmprfidsController;
+use App\Http\Controllers\Api\DashboardController;
+use App\Http\Controllers\Api\PersonnelsController;
+use App\Http\Controllers\PersonnelsController as ControllersPersonnelsController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
+
+Route::get('dashboard', [DashboardController::class, 'index']);
+Route::get('dashboard/{id}', [DashboardController::class, 'show']);
+Route::post('dashboard', [DashboardController::class, 'store']);
+Route::put('dashboard/{id}', [DashboardController::class, 'update']);
+Route::delete('dashboard/{id}', [DashboardController::class, 'destroy']);
+
+Route::prefix('personnels')->group(function () {
+    // GET /api/personnels - Menampilkan semua data personel
+    Route::get('/', [PersonnelsController::class, 'index']);
+
+    // POST /api/personnels - Menyimpan data personel baru
+    Route::post('/', [PersonnelsController::class, 'store']);
+
+    // GET /api/personnels/{id} - Menampilkan detail personel berdasarkan ID
+    Route::get('/{id}', [PersonnelsController::class, 'show']);
+
+    // PUT /api/personnels/{id} - Memperbarui data personel berdasarkan ID
+    Route::put('/{id}', [PersonnelsController::class, 'update']);
+
+    // DELETE /api/personnels/{id} - Menghapus data personel berdasarkan ID
+    Route::delete('/{id}', [PersonnelsController::class, 'destroy']);
+});
 
 Route::prefix('tmprfids')->group(function () {
     // GET /api/tmprfids - Menampilkan semua data tmprfid

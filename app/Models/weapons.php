@@ -23,4 +23,9 @@ class weapons extends Model
         'rackNumber',
         'timestamp',
     ];
+
+    public function personnel()
+    {
+        return $this->belongsTo(personnels::class, 'loadCellID', 'loadCellID'); // Sesuaikan foreign key
+    }
 }

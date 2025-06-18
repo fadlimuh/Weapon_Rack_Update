@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="{{ asset('assets/fontawesome/css/all.min.css') }}">
     <link href="{{ asset('assets/datatables/datatables.min.css') }}" rel="stylesheet">
     <link rel="icon" href="{{ asset('assets/img/logo/icon-logo-website.png') }}" type="image/png">
+    <link rel="stylesheet" href="{{ asset('assets/sweetalert/package/dist/sweetalert2.min.css') }}">
     <style>
         body {
             font-family: 'PlusJakartaSans', sans-serif;
@@ -199,10 +200,10 @@
                                 <a href="{{ route('personnels.edit', $p->personnel_id) }}" class="btn btn-sm btn-warning me-1">
                                     <i class="fas fa-pencil-alt"></i>
                                 </a>
-                                <form action="{{ route('personnels.destroy', $p->personnel_id) }}" method="POST" style="display:inline;">
+                                <form action="{{ route('personnels.destroy', $p->personnel_id) }}" method="POST" style="display:inline;" class="delete-form">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('{{ __('messages.Are you sure you want to delete this data?') }}')">
+                                    <button type="button" class="btn btn-sm btn-danger delete-button">
                                         <i class="fas fa-trash-alt"></i>
                                     </button>
                                 </form>
@@ -213,6 +214,44 @@
                 </table>
             </div>
         </div>
+
+        <script src="{{ asset('assets/sweetalert/package/dist/sweetalert2.min.js') }}"></script>
+        <script>
+
+            const messages = {
+                areYouSure: '{{ __("messages.confirmation_are_you_sure") }}',
+                actionCannotBeUndone: '{{ __("messages.confirmation_action_undone") }}',
+                yesDeleteIt: '{{ __("messages.confirmation_yes_delete") }}',
+                cancel: '{{ __("messages.confirmation_cancel") }}'
+            };
+
+            document.addEventListener("DOMContentLoaded", function () {
+            const deleteButtons = document.querySelectorAll('.delete-button');
+
+            deleteButtons.forEach(button => {
+                button.addEventListener('click', function (e) {
+                    e.preventDefault();
+
+                    const form = this.closest('.delete-form');
+
+                    Swal.fire({
+                        title: messages.areYouSure,
+                        text: messages.actionCannotBeUndone,
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#d33',
+                        cancelButtonColor: '#3085d6',
+                        confirmButtonText: messages.yesDeleteIt,
+                        cancelButtonText: messages.cancel
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            form.submit();
+                        }
+                    });
+                });
+            });
+        });
+        </script>
 
         <!-- DataTables JS -->
         <script src="{{ asset('assets/datatables/datatables.min.js') }}" defer></script>

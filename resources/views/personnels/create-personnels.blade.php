@@ -204,30 +204,65 @@
                 @csrf
                 <div class="form-group">
                     <label for="personnel_id">{{ __('messages.form_personnel_id') }}</label>
-                    <input type="text" name="personnel_id" id="personnel_id" class="form-control" required>
+                    <input type="text" name="personnel_id" id="personnel_id" class="form-control" required readonly>
                 </div>
+
+                <script>
+                    document.addEventListener('DOMContentLoaded', function () {
+                        const loadCellSelect = document.getElementById('loadCellID');
+                        const personnelIdInput = document.getElementById('personnel_id');
+
+                        loadCellSelect.addEventListener('change', function () {
+                            const selectedLoadCell = loadCellSelect.value;
+                            if (selectedLoadCell) {
+                                personnelIdInput.value = `${selectedLoadCell}`;
+                            } else {
+                                personnelIdInput.value = '';
+                            }
+                        });
+                    });
+                </script>
                 <div class="form-group">
                     <label for="loadCellID">{{ __('messages.form_weapon_id') }}</label>
                     <select name="loadCellID" id="loadCellID" class="form-control" required>
                         <option value="" disabled selected>{{ __('messages.Select_LoadCells') }}</option>
+                        @php
+                            $usedLoadCells = \App\Models\personnels::pluck('loadCellID')->toArray();
+                        @endphp
                         @foreach (\App\Models\Weapons::distinct()->pluck('loadCellID') as $loadCellID)
-                            <option value="{{ $loadCellID }}">{{ $loadCellID }}</option>
+                            @if (!in_array($loadCellID, $usedLoadCells))
+                                <option value="{{ $loadCellID }}">{{ $loadCellID }}</option>
+                            @endif
                         @endforeach
                     </select>
                 </div>
                 <div class="form-group">
                     <label for="nokartu">{{ __('messages.form_card_number') }}</label>
-                    @php
-                        $nokartu = \App\Models\Tmprfids::pluck('nokartu')->first();
-                    @endphp
-
-                    @if ($nokartu)
-                        <input type="text" name="nokartu" id="nokartu" class="form-control" required readonly value="{{ old('nokartu', $nokartu) }}">
-                    @else
-                        <input type="text" name="nokartu" id="nokartu" class="form-control" required readonly value="{{ __('messages.form_no_rfid') }}">
-                        <small class="text-danger">{{ __('messages.form_scan_rfid') }}</small>
-                    @endif
+                    <input type="text" name="nokartu" id="nokartu" class="form-control" required readonly>
+                    <small class="text-danger" id="rfidMessage">{{ __('messages.form_scan_rfid') }}</small>
                 </div>
+
+                <script>
+                    document.addEventListener('DOMContentLoaded', function () {
+                        function fetchRFID() {
+                            fetch('/api/tmprfids')
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (data.success && data.data.length > 0) {
+                                        document.getElementById('nokartu').value = data.data[0].nokartu;
+                                        document.getElementById('rfidMessage').textContent = '';
+                                    } else {
+                                        document.getElementById('nokartu').value = '{{ __('messages.form_no_rfid') }}';
+                                        document.getElementById('rfidMessage').textContent = '{{ __('messages.form_scan_rfid') }}';
+                                    }
+                                })
+                                .catch(error => console.error('Error fetching RFID:', error));
+                        }
+
+                        // Fetch RFID every 2 seconds
+                        setInterval(fetchRFID, 2000);
+                    });
+                </script>
                 <div class="form-group">
                     <label for="nama">{{ __('messages.form_name') }}</label>
                     <input type="text" name="nama" id="nama" class="form-control" required>

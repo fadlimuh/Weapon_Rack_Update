@@ -114,12 +114,12 @@
                 width: 200px;
             }
 
-            .content {
-                margin-left: 0;
-            }
-
             .sidebar a {
                 padding: 10px;
+            }
+
+            .content {
+                margin-left: 0;
             }
 
             .navbar .navbar-brand {
@@ -191,6 +191,142 @@
                                 <!-- DataTables JS -->
                                 <script src="{{ asset('assets/datatables/datatables.min.js') }}" defer></script>
                                 <script>
+                                    $(document).ready(function () {
+                                        // Inisialisasi DataTables
+                                        const table = $('#weaponTable').DataTable({
+                                            responsive: true,
+                                            autoWidth: false,
+                                            ajax: {
+                                                url: "/api/weapons", // Endpoint API
+                                                type: 'GET',
+                                                dataSrc: function (response) {
+                                                    console.log('Response API:', response); // Debugging
+                                                    if (response.success && Array.isArray(response.data)) {
+                                                        return response.data;
+                                                    } else {
+                                                        console.error('Respons API tidak valid:', response);
+                                                        return [];
+                                                    }
+                                                }
+                                            },
+                                            columns: [
+                                                {
+                                                    data: 'rackNumber',
+                                                    render: function (data, type, row, meta) {
+                                                        const rowspan = table
+                                                            .rows()
+                                                            .data()
+                                                            .filter(r => r.rackNumber === row.rackNumber).length;
+                                                        return `<td rowspan="${rowspan}" class="align-middle text-center">${row.rackNumber}</td>`;
+                                                    },
+                                                    className: 'align-middle text-center',
+                                                    title: '{{ __("messages.table_rack") }}'
+                                                },
+                                                {
+                                                    data: 'loadCellID',
+                                                    title: '{{ __("messages.table_load_cell_id") }}'
+                                                },
+                                                {
+                                                    data: 'status',
+                                                    render: function (data) {
+                                                        if (data === 0) {
+                                                            return `<span class="badge bg-danger">{{ __('messages.status_red_description') }}</span>`;
+                                                        } else if (data === 1) {
+                                                            return `<span class="badge bg-warning">{{ __('messages.status_yellow_description') }}</span>`;
+                                                        } else if (data === 2) {
+                                                            return `<span class="badge bg-success">{{ __('messages.status_green_description') }}</span>`;
+                                                        }
+                                                        return '';
+                                                    },
+                                                    title: '{{ __("messages.table_status") }}'
+                                                },
+                                                {
+                                                    data: 'weight',
+                                                    render: function (data) {
+                                                        return data + ' {{ __("messages.table_weight_unit") }}';
+                                                    },
+                                                    className: 'align-middle',
+                                                    title: '{{ __("messages.table_weight") }}'
+                                                }
+                                            ],
+                                            language: {
+                                                search: '<i class="fas fa-search"></i> {{ __("messages.datatable_search") }}',
+                                                lengthMenu: "{{ __('messages.datatable_length_menu') }}",
+                                                info: "{{ __('messages.datatable_info') }}",
+                                                infoFiltered: "{{ __('messages.datatable_info_filtered') }}",
+                                                paginate: {
+                                                    first: '<i class="fas fa-step-backward"></i> {{ __("messages.datatable_first") }}',
+                                                    last: '<i class="fas fa-step-forward"></i> {{ __("messages.datatable_last") }}',
+                                                    next: '<i class="fas fa-chevron-right"></i> {{ __("messages.datatable_next") }}',
+                                                    previous: '<i class="fas fa-chevron-left"></i> {{ __("messages.datatable_previous") }}'
+                                                }
+                                            },
+                                            dom: '<"d-flex justify-content-between align-items-center mb-3"Bf>t<"d-flex justify-content-between align-items-center mt-3"ip>',
+                                            buttons: [
+                                                {
+                                                    extend: 'copy',
+                                                    text: '<i class="fas fa-copy"></i> {{ __("messages.datatable_copy") }}',
+                                                    className: 'btn btn-secondary btn-sm',
+                                                    title: '{{ __("messages.datatable_copy") }}'
+                                                },
+                                                {
+                                                    extend: 'csv',
+                                                    text: '<i class="fas fa-file-csv"></i> {{ __("messages.datatable_csv") }}',
+                                                    className: 'btn btn-primary btn-sm',
+                                                    title: '{{ __("messages.datatable_csv") }}'
+                                                },
+                                                {
+                                                    extend: 'excel',
+                                                    text: '<i class="fas fa-file-excel"></i> {{ __("messages.datatable_excel") }}',
+                                                    className: 'btn btn-success btn-sm',
+                                                    title: '{{ __("messages.datatable_excel") }}'
+                                                },
+                                                {
+                                                    extend: 'pdf',
+                                                    text: '<i class="fas fa-file-pdf"></i> {{ __("messages.datatable_pdf") }}',
+                                                    className: 'btn btn-danger btn-sm',
+                                                    title: '{{ __("messages.datatable_pdf") }}',
+                                                    customize: function(doc) {
+                                                        doc.defaultStyle.fontSize = 10;
+                                                        doc.styles.tableHeader.fontSize = 12;
+                                                    }
+                                                },
+                                                {
+                                                    extend: 'print',
+                                                    text: '<i class="fas fa-print"></i> {{ __("messages.datatable_print") }}',
+                                                    className: 'btn btn-info btn-sm',
+                                                    title: '{{ __("messages.datatable_print") }}',
+                                                    customize: function(win) {
+                                                        $(win.document.body).css('font-size', '12px');
+                                                        $(win.document.body).find('table').addClass('compact').css('font-size', 'inherit');
+                                                    }
+                                                }
+                                            ],
+                                            lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "{{ __('messages.datatable_length_menu_all') }}"]],
+                                            pageLength: 10,
+                                            order: [[0, 'asc']],
+                                            initComplete: function() {
+                                                console.log('DataTables telah diinisialisasi dengan sukses!');
+                                            }
+                                        });
+                                    });
+                                </script>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
+
+
+{{-- Script ui sebelumnya --}}
+
+{{--
+                                    <script>
                                     $(document).ready(function () {
                                         // Inisialisasi DataTables
                                         const table = $('#weaponTable').DataTable({
@@ -314,13 +450,4 @@
                                         });
                                     });
                                 </script>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-</body>
-</html>
+--}}
